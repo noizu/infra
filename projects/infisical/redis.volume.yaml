@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data-sec-redis-pv
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  claimRef:
+    namespace: infisical
+    name: redis-data-sec-redis-master-0
+  hostPath:
+    path: /data/sec-redis-master

@@ -1,0 +1,156 @@
+# Infisical Self-Hosted Helm Values
+# ==================================
+# 
+# Usage:
+#   helm upgrade --install infisical infisical-helm-charts/infisical-standalone \
+#     --namespace infisical \
+#     --values values.yaml
+#
+# Prerequisites:
+#   1. Create namespace: kubectl create namespace infisical
+#   2. Create infisical-secrets (see infisical-manifests.yaml)
+#   3. Update values below with your configuration
+
+nameOverride: "infisical"
+fullnameOverride: "infisical"
+
+infisical:
+  enabled: true
+  name: infisical
+  
+  # Enable automatic database migrations on startup
+  autoDatabaseSchemaMigration: true
+  
+  # Number of replicas (use 1 for dev, 2+ for production)
+  replicaCount: 2
+  
+  image:
+    repository: infisical/infisical
+    # Check https://hub.docker.com/r/infisical/infisical/tags for latest
+    # DO NOT use 'latest' in production
+    tag: "v0.91.0-postgres"
+    pullPolicy: IfNotPresent
+  
+  # Reference to the Kubernetes secret containing config
+  kubeSecretRef: "infisical-secrets"
+  
+  # Pod annotations (e.g., for Prometheus scraping)
+  podAnnotations: {}
+  
+  # Deployment annotations
+  deploymentAnnotations: {}
+  
+  # Node affinity rules
+  affinity: {}
+  
+  # Service configuration
+  service:
+    annotations: {}
+    type: ClusterIP
+    nodePort: ""
+  
+  # Resource limits and requests
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+# Ingress configuration
+ingress:
+  enabled: true
+  
+  # Your domain - CHANGE THIS
+  hostName: "infisical.example.com"
+  
+  # Ingress class (nginx, traefik, etc.)
+  ingressClassName: nginx
+  
+  # Enable nginx-specific settings
+  nginx:
+    enabled: true
+  
+  # Additional annotations
+  annotations:
+    # Increase body size for file uploads
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    # SSL redirect
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  
+  # TLS configuration
+  tls:
+    - secretName: infisical-tls  # cert-manager will create this
+      hosts:
+        - infisical.example.com
+
+# =============================================================================
+# DATABASE CONFIGURATION
+# =============================================================================
+# For DEVELOPMENT/POC: Use in-cluster PostgreSQL (enabled: true)
+# For PRODUCTION: Use external PostgreSQL (enabled: false) and set DB_CONNECTION_URI
+#                 in the infisical-secrets
+
+postgresql:
+  # Set to false for production (use external DB)
+  enabled: true
+  
+  name: "postgresql"
+  fullnameOverride: "postgresql"
+  
+  auth:
+    username: infisical
+    # CHANGE THIS - use a strong password
+    password: "change-me-to-strong-password"
+    database: infisicalDB
+  
+  # Primary instance configuration
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+      # storageClass: ""  # Use default storage class
+    
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+
+# =============================================================================
+# REDIS CONFIGURATION
+# =============================================================================
+# For DEVELOPMENT/POC: Use in-cluster Redis (enabled: true)
+# For PRODUCTION: Use external Redis (enabled: false) and set REDIS_URL
+#                 in the infisical-secrets
+
+redis:
+  # Set to false for production (use external Redis)
+  enabled: true
+  
+  name: "redis"
+  fullnameOverride: "redis"
+  
+  # Standalone mode (no clustering)
+  architecture: standalone
+  cluster:
+    enabled: false
+  
+  # Authentication
+  auth:
+    enabled: true
+    # CHANGE THIS - use a strong password
+    password: "change-me-to-strong-password"
+  
+  # Resources
+  master:
+    persistence:
+      enabled: true
+      size: 5Gi
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 128Mi

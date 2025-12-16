@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data-sec-postgres-pv
+  # Note: PVs are cluster-scoped, namespace here does nothing
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual          # Add this
+  claimRef:                         # Add this block
+    namespace: infisical
+    name: data-sec-postgres-0
+  hostPath:
+    path: /data/sec-postgres
