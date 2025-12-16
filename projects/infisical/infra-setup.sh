@@ -117,7 +117,7 @@ helm upgrade --install ${POSTGRES_NAME} bitnami/postgresql \
   --namespace $NAMESPACE \
   --values ./postgres-values.yaml \
   --wait \
-  --timeout 5m
+  --timeout 60m
 
 echo -e "${GREEN}✓ PostgreSQL deployed as '${POSTGRES_NAME}'${NC}"
 echo ""
@@ -168,7 +168,7 @@ helm upgrade --install ${REDIS_NAME} bitnami/redis \
   --namespace $NAMESPACE \
   --values ./redis-values.yaml \
   --wait \
-  --timeout 5m
+  --timeout 60m
 
 echo -e "${GREEN}✓ Redis deployed as '${REDIS_NAME}'${NC}"
 echo ""
@@ -248,7 +248,7 @@ helm upgrade --install infisical infisical-helm-charts/infisical-standalone \
   --namespace $NAMESPACE \
   --values ./infisical-values.yaml \
   --wait \
-  --timeout 10m
+  --timeout 60m
 
 echo -e "${GREEN}✓ Infisical deployed${NC}"
 echo ""

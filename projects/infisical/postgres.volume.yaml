@@ -13,4 +13,4 @@ spec:
     namespace: infisical
     name: data-sec-postgres-0
   hostPath:
-    path: /data/sec-postgres
+    path: /k8-volumes/infisical/sec-postgres

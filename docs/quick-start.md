@@ -10,6 +10,7 @@ You have two clusters configured:
 |---------|--------|---------|
 | `local` | 208.64.36.79:6443 | **Production colo** |
 | `minikube` | 127.0.0.1:58137 | Local dev |
+| `docker`    | ... | Docker K8 |
 
 ```bash
 # Check current context
@@ -20,6 +21,9 @@ kubectl config use-context local
 
 # Switch to local dev
 kubectl config use-context minikube
+
+# Switch to docker
+kubectl config use-context docker
 ```
 
 ## TL;DR - Deploy Any Project

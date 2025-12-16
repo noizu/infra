@@ -12,4 +12,4 @@ spec:
     namespace: infisical
     name: redis-data-sec-redis-master-0
   hostPath:
-    path: /data/sec-redis-master
+    path: /k8-volumes/infisical/sec-redis-master
